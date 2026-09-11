@@ -13,16 +13,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static("public"));
+
 app.use(express.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
-// app.set("views", "./views")
 
 app.use(cookieParser());
 
 app.use(
-  session({ secret: "my-secret", resave: true, saveUninitialized: false })
+  session({
+    secret: "my-secret",
+    resave: true,
+    saveUninitialized: false,
+  })
 );
+
 app.use(flash());
 
 app.use(requestIp.mw());
@@ -35,17 +40,11 @@ app.use((req, res, next) => {
   return next();
 });
 
-// How It Works:
-// This middleware runs on every request before reaching the route handlers.
-//? res.locals is an object that persists throughout the request-response cycle.
-//? If req.user exists (typically from authentication, like Passport.js), it's stored in res.locals.user.
-//? Views (like EJS, Pug, or Handlebars) can directly access user without manually passing it in every route.
-
-// express router
-// app.use(router);
+// Express routes
 app.use(authRoutes);
 app.use(shortenerRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+// Start server
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
